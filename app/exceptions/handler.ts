@@ -1,5 +1,5 @@
 import app from '@adonisjs/core/services/app'
-import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import { type HttpContext, ExceptionHandler } from '@adonisjs/core/http'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -18,7 +18,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
 
   /**
    * The method is used to report error to the logging service or
-   * the third party error monitoring service.
+   * the a third party error monitoring service.
    *
    * @note You should not attempt to send a response from this method.
    */

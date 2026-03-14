@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:24
 
 WORKDIR /app
 
@@ -7,5 +7,4 @@ RUN npm ci
 
 COPY . .
 
-CMD ["node", "ace.js","serve"]
-
+CMD ["npm", "run", "dev"]

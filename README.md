@@ -1,36 +1,21 @@
-# Project Name
+# Catalog API
 
-This project is built with [AdonisJS](https://adonisjs.com).
+AdonisJS v7 catalog service.
 
 ## Requirements
 
 - Docker
 
-## Getting Started
+## Running
 
-Use the provided `.env.example` file as a template.
-
-Copy it and create your own `.env` file at the root of the project:
-
+**Build the image:**
 ```bash
-cp .env.example .env
+docker build -t api .
 ```
 
-Update the values according to your local environment.
-
-Install the packages (to install node_modules properly)
-
+**Run the container:**
 ```bash
-npm install
+docker run -p 3333:3333 api
 ```
 
-Now, build the Docker Image
-
-```bash
-docker build --no-cache -t adonis-app .
-docker run -p 3333:3333 adonis-app
-```
-
-The application will be available at:
-
-http://localhost:3333
+> Replace `3333` with the port defined in your `.env` if different.
