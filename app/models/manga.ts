@@ -8,6 +8,9 @@ export default class Manga extends BaseModel {
   declare id: number
 
   @column()
+  declare slug: string
+
+  @column()
   declare title_en: string
 
   @column()
@@ -43,4 +46,3 @@ export default class Manga extends BaseModel {
   @column.dateTime({ autoCreate: true })
   declare created_at: DateTime
 }
-
