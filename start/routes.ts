@@ -1,7 +1,10 @@
 import router from '@adonisjs/core/services/router'
 
+const GenresController = () => import('#controllers/genres_controller')
 const AnimeController = () => import('#controllers/anime/anime_controller')
 const MangaController = () => import('#controllers/manga/manga_controller')
+
+router.get('/genres', [GenresController, 'index'])
 
 router.get('/anime', [AnimeController, 'index'])
 router.get('/anime/:id', [AnimeController, 'show'])
