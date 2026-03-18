@@ -22,3 +22,18 @@ const MangaGenresController = () => import('#controllers/manga/manga_genres_cont
 
 router.get('/anime/:anime_id/genres', [AnimeGenresController, 'index'])
 router.get('/manga/:manga_id/genres', [MangaGenresController, 'index'])
+
+
+
+// adonis-swagger api
+
+import AutoSwagger from 'adonis-autoswagger'
+import swagger from '#config/swagger'
+
+router.get('/swagger.json', async () => {
+  return AutoSwagger.default.docs(router.toJSON(), swagger)
+})
+
+router.get('/docs', async () => {
+  return AutoSwagger.default.ui('/swagger.json', swagger)
+})
