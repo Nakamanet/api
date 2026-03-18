@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Anime from '#models/anime'
+import Anime from '#models/anime/anime'
 
 export default class AnimeController {
   async index({ request, response }: HttpContext) {
