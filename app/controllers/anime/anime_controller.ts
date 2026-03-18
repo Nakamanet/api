@@ -23,7 +23,10 @@ export default class AnimeController {
   }
 
   async show({ params, response }: HttpContext) {
-    const anime = await Anime.findOrFail(params.id)
+    const identifier = params.id
+    const anime = isNaN(Number(identifier))
+      ? await Anime.query().where('slug', identifier).firstOrFail()
+      : await Anime.findOrFail(identifier)
     return response.ok(anime)
   }
 }
