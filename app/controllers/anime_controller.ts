@@ -2,8 +2,12 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Anime from '#models/anime'
 
 export default class AnimeController {
-  async index({ response }: HttpContext) {
-    const anime = await Anime.all()
+  async index({ request, response }: HttpContext) {
+    const page  = request.input('page', 1)
+    const limit = request.input('limit', 20)
+
+    const anime = await Anime.query().paginate(page, limit)
+
     return response.ok(anime)
   }
 
