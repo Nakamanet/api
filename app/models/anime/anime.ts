@@ -1,5 +1,8 @@
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
+import Category from '#models/category/category'
+import Genre from '#models/genre'
 
 export default class Anime extends BaseModel {
   public static table = 'Anime'
@@ -57,4 +60,23 @@ export default class Anime extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updated_at: DateTime
+
+  @manyToMany(() => Category, {
+    pivotTable: 'Anime_Categories',
+    localKey: 'id',
+    pivotForeignKey: 'anime_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'category_id',
+  })
+  declare categories: ManyToMany<typeof Category>
+
+
+  @manyToMany(() => Genre, {
+    pivotTable: 'Anime_Genres',
+    localKey: 'id',
+    pivotForeignKey: 'anime_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'genre_id',
+  })
+  declare genres: ManyToMany<typeof Genre>
 }
