@@ -1,13 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Anime from '#models/anime/anime'
+import Manga from '#models/manga/manga'
 
-export default class AnimeGenresController {
+export default class MangaGenresController {
   async index({ params, response }: HttpContext) {
-    const anime = await Anime.query()
-      .where('id', params.anime_id)
+    const manga = await Manga.query()
+      .where('id', params.manga_id)
       .preload('genres')
       .firstOrFail()
 
-    return response.ok(anime.genres)
+    return response.ok(manga.genres)
   }
 }
