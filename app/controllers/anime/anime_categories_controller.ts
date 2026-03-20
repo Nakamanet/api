@@ -4,7 +4,7 @@ import Anime from '#models/anime/anime'
 export default class AnimeCategoriesController {
   async index({ params, response }: HttpContext) {
     const anime = await Anime.query()
-      .where('id', params.anime_id)
+      .where('id', params.id)
       .preload('categories')
       .firstOrFail()
 
