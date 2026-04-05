@@ -11,8 +11,13 @@ services:
       DB_USER: catalog
       DB_PASSWORD: catalog
       DB_DATABASE: catalog
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      LIMITER_STORE: redis
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   db:
@@ -29,11 +34,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-      
+
   redis:
     image: redis:7-alpine
     ports:
-      - "6380:6380"                
+      - "6380:6379"                
     volumes:
       - redisdata:/data
     healthcheck:

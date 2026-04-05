@@ -18,7 +18,7 @@ const redisConfig = defineConfig({
     */
     main: {
       host: env.get('REDIS_HOST','127.0.0.1'),
-      port: env.get('REDIS_PORT','6380'),
+      port: env.get('REDIS_PORT','6379'),
       password: env.get('REDIS_PASSWORD', ''),
       db: 0,
       keyPrefix: '',

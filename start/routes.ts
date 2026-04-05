@@ -2,6 +2,7 @@ import router from '@adonisjs/core/services/router'
 import AutoSwagger from 'adonis-autoswagger'
 import swagger from '#config/swagger'
 
+
 import './routes/anime.ts'
 import './routes/manga.ts'
 import './routes/catalog.ts'
