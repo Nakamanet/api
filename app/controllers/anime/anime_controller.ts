@@ -29,6 +29,7 @@ export default class AnimeController {
     return response.ok(anime)
   }
 
+
   async show({ params, response }: HttpContext) {
     const identifier = params.id
     const anime = isNaN(Number(identifier))
