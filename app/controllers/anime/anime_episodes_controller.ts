@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import cache from '@adonisjs/cache/services/main'
 import Episode from '#models/episode'
 
 export default class AnimeEpisodesController {
@@ -6,10 +7,16 @@ export default class AnimeEpisodesController {
     const page  = request.input('page', 1)
     const limit = request.input('limit', 20)
 
-    const episodes = await Episode.query()
-      .where('anime_id', params.id)
-      .orderBy('number', 'asc')
-      .paginate(page, limit)
+    const episodes = await cache.getOrSet({
+      key: `anime:${params.id}:episodes:p${page}:l${limit}`,
+      ttl: '5m',
+      factory: async () => {
+        return Episode.query()
+          .where('anime_id', params.id)
+          .orderBy('number', 'asc')
+          .paginate(page, limit)
+      },
+    })
 
     return response.ok(episodes)
   }
