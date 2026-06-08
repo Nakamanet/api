@@ -11,6 +11,7 @@ export class ChatService {
   async boot(httpServer: ReturnType<typeof createServer>) {
     // connect mongoose
     await mongoose.connect(process.env.MONGO_URL!)
+    console.log('MongoDB connected')
 
     this.io = new Server(httpServer, {
       cors: {
@@ -18,28 +19,31 @@ export class ChatService {
         methods: ['GET', 'POST'],
       },
     })
+    console.log("user?",this.io)
 
-    // auth middleware — runs before every connection
-    this.io.use((socket, next) => {
-      try {
+
+   this.io.use(async (socket, next) => {
+    try {
         const token =
-          socket.handshake.auth?.token ||
-          socket.handshake.headers.authorization?.replace('Bearer ', '')
+        socket.handshake.auth?.token ||
+        socket.handshake.headers.authorization?.replace('Bearer ', '')
 
         if (!token) return next(new Error('No token'))
 
-        const payload = jwt.verify(token, process.env.JWT_SECRET!) as any
+        const payload = jwt.verify(token, process.env.JWT_SECRET!, {
+        algorithms: ['HS256']
+        }) as any
 
+        // just store the user_id from the token
         socket.data.user = {
-          id:         String(payload.sub),
-          username:   payload.username,
-          avatar_url: payload.avatar_url ?? null,
+        id: String(payload.sub),
         }
 
         next()
-      } catch {
+    } catch (err) {
+        console.error('Socket auth error:', err)
         next(new Error('Invalid token'))
-      }
+    }
     })
 
     this.io.on('connection', async (socket) => {
@@ -54,20 +58,19 @@ export class ChatService {
 
       socket.emit('history', history.reverse())
 
-      // handle incoming message
-      socket.on('message', async (content: string) => {
-        if (!content?.trim()) return
+     socket.on('chat:message', async (data: { content: string, username: string, avatar_url: string | null }) => {
+        console.log('message received:', data)
+        if (!data.content?.trim()) return
 
         const message = await Message.create({
-          user_id:    user.id,
-          username:   user.username,
-          avatar_url: user.avatar_url,
-          content:    content.trim(),
+            user_id:    socket.data.user.id,
+            username:   data.username,
+            avatar_url: data.avatar_url ?? null,
+            content:    data.content.trim(),
         })
 
-        // broadcast to everyone including sender
-        this.io.emit('message', message)
-      })
+        this.io.emit('chat:message', message)
+        })
 
       socket.on('disconnect', () => {
         console.log(`${user.username} disconnected`)
