@@ -14,11 +14,27 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       LIMITER_STORE: redis
+      JWT_SECRET: ${JWT_SECRET}
+      MONGO_URL: ${MONGO_URL}
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
+    networks:
+      - default
+      - shared_network
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
 
   db:
     image: postgres:16
@@ -34,6 +50,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - default
 
   redis:
     image: redis:7-alpine
@@ -46,8 +64,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - default
 
 volumes:
   pgdata:
   redisdata:
+  mongodata:
+
+networks:
+  shared_network:
+    external: true
   
