@@ -22,7 +22,7 @@ export default class AnimeController {
           })
         }
 
-        return await query.paginate(page, limit)
+        return await query.orderBy('id', 'asc').paginate(page, limit)
       },
     })
 

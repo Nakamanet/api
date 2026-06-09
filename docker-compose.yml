@@ -26,6 +26,8 @@ services:
       POSTGRES_USER: catalog
       POSTGRES_PASSWORD: catalog
       POSTGRES_DB: catalog
+    ports:
+      - "5435:5432"
     volumes:
       - ./catalog.sql:/docker-entrypoint-initdb.d/catalog.sql
       - pgdata:/var/lib/postgresql/data
@@ -38,7 +40,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6380:6379"                
+      - "6380:6379"
     volumes:
       - redisdata:/data
     healthcheck:
