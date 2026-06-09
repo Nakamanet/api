@@ -22,7 +22,7 @@ export default class MangaController {
           })
         }
 
-        return query.paginate(page, limit)
+        return query.orderBy('id', 'asc').paginate(page, limit)
       },
     })
 

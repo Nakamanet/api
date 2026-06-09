@@ -9,6 +9,7 @@ tmp/*
 .env.local
 .env.production.local
 .env.development.local
+.env.example
 
 # Frontend assets compiled code
 public/assets
@@ -26,5 +27,4 @@ yarn-error.log
 .DS_Store
 
 # dump
-
 catalog.sql
