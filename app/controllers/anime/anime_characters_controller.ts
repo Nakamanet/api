@@ -22,6 +22,7 @@ export default class AnimeCharactersController {
               ELSE 5
             END
           `)
+          .orderBy('c.name', 'asc')
           .select([
             'ac.anime_id',
             'ac.character_id',

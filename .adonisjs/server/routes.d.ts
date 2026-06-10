@@ -4,21 +4,61 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
-    'auth.new_account.store': { paramsTuple?: []; params?: {} }
-    'auth.access_token.store': { paramsTuple?: []; params?: {} }
-    'auth.access_token.destroy': { paramsTuple?: []; params?: {} }
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'anime.index': { paramsTuple?: []; params?: {} }
+    'anime.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_categories.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_genres.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_episodes.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_characters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_productions.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga.index': { paramsTuple?: []; params?: {} }
+    'manga.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_categories.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_genres.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_chapters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_characters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'genres.index': { paramsTuple?: []; params?: {} }
+    'categories.index': { paramsTuple?: []; params?: {} }
   }
   GET: {
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'anime.index': { paramsTuple?: []; params?: {} }
+    'anime.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_categories.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_genres.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_episodes.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_characters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_productions.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga.index': { paramsTuple?: []; params?: {} }
+    'manga.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_categories.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_genres.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_chapters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_characters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'genres.index': { paramsTuple?: []; params?: {} }
+    'categories.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
-  }
-  POST: {
-    'auth.new_account.store': { paramsTuple?: []; params?: {} }
-    'auth.access_token.store': { paramsTuple?: []; params?: {} }
-    'auth.access_token.destroy': { paramsTuple?: []; params?: {} }
+    'anime.index': { paramsTuple?: []; params?: {} }
+    'anime.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_categories.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_genres.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_episodes.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_characters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_productions.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'anime_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga.index': { paramsTuple?: []; params?: {} }
+    'manga.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_categories.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_genres.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_chapters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_characters.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'manga_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'genres.index': { paramsTuple?: []; params?: {} }
+    'categories.index': { paramsTuple?: []; params?: {} }
   }
 }
 declare module '@adonisjs/core/types/http' {
