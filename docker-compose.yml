@@ -15,9 +15,42 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       LIMITER_STORE: redis
+      JWT_SECRET: ${JWT_SECRET}
+      MONGO_URL: ${MONGO_URL}
     depends_on:
       redis:
         condition: service_healthy
+    networks:
+      - default
+      - shared_network
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: catalog
+      POSTGRES_PASSWORD: catalog
+      POSTGRES_DB: catalog
+    volumes:
+      - ./catalog.sql:/docker-entrypoint-initdb.d/catalog.sql
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
 
   redis:
     image: redis:7-alpine
@@ -30,7 +63,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - shared_network
 
 volumes:
+  pgdata:
   redisdata:
+  mongodata:
+
+networks:
+  shared_network:
+    external: true
   
