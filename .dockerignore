@@ -1,0 +1,29 @@
+# Dependencies — installed inside the image
+node_modules
+
+# Build output & runtime artifacts
+build
+tmp/*
+!tmp/.gitkeep
+
+# Large Postgres dump — the API uses Neon, this is never needed in the image (~187 MB)
+catalog.sql
+
+# VCS & CI
+.git
+.github
+.gitignore
+
+# Secrets / env — provided at runtime via compose or the orchestrator
+.env
+.env.*
+
+# Editors & OS
+.idea
+.vscode
+.fleet
+.DS_Store
+
+# Logs & local tooling
+*.log
+.claude
