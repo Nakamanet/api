@@ -1,0 +1,68 @@
+services:
+  api:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "3333:3333"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3333
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_SSL: ${DB_SSL}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      LIMITER_STORE: redis
+      JWT_SECRET: ${JWT_SECRET}
+      MONGO_URL: ${MONGO_URL}
+    # Bind-mount the source for live HMR; keep the image's linux
+    # node_modules by shadowing it with an anonymous volume.
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    networks:
+      - default
+      - shared_network
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - shared_network
+
+volumes:
+  redisdata:
+  mongodata:
+
+networks:
+  shared_network:
+    external: true

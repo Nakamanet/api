@@ -2,18 +2,51 @@
 import type { routes } from './index.ts'
 
 export interface ApiDefinition {
-  auth: {
-    newAccount: {
-      store: typeof routes['auth.new_account.store']
-    }
-    accessToken: {
-      store: typeof routes['auth.access_token.store']
-      destroy: typeof routes['auth.access_token.destroy']
-    }
+  anime: {
+    index: typeof routes['anime.index']
+    show: typeof routes['anime.show']
   }
-  profile: {
-    profile: {
-      show: typeof routes['profile.profile.show']
-    }
+  animeCategories: {
+    index: typeof routes['anime_categories.index']
+  }
+  animeGenres: {
+    index: typeof routes['anime_genres.index']
+  }
+  animeEpisodes: {
+    index: typeof routes['anime_episodes.index']
+  }
+  animeCharacters: {
+    index: typeof routes['anime_characters.index']
+  }
+  animeProductions: {
+    index: typeof routes['anime_productions.index']
+  }
+  animeStaff: {
+    index: typeof routes['anime_staff.index']
+  }
+  manga: {
+    index: typeof routes['manga.index']
+    show: typeof routes['manga.show']
+  }
+  mangaCategories: {
+    index: typeof routes['manga_categories.index']
+  }
+  mangaGenres: {
+    index: typeof routes['manga_genres.index']
+  }
+  mangaChapters: {
+    index: typeof routes['manga_chapters.index']
+  }
+  mangaCharacters: {
+    index: typeof routes['manga_characters.index']
+  }
+  mangaStaff: {
+    index: typeof routes['manga_staff.index']
+  }
+  genres: {
+    index: typeof routes['genres.index']
+  }
+  categories: {
+    index: typeof routes['categories.index']
   }
 }

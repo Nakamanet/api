@@ -5,6 +5,25 @@
 
 export const controllers = {
   AccessToken: () => import('#controllers/access_token_controller'),
+  anime: {
+    AnimeCategories: () => import('#controllers/anime/anime_categories_controller'),
+    AnimeCharacters: () => import('#controllers/anime/anime_characters_controller'),
+    Anime: () => import('#controllers/anime/anime_controller'),
+    AnimeEpisodes: () => import('#controllers/anime/anime_episodes_controller'),
+    AnimeGenres: () => import('#controllers/anime/anime_genres_controller'),
+    AnimeProductions: () => import('#controllers/anime/anime_productions_controller'),
+    AnimeStaff: () => import('#controllers/anime/anime_staff_controller'),
+  },
+  Categories: () => import('#controllers/categories_controller'),
+  Genres: () => import('#controllers/genres_controller'),
+  manga: {
+    MangaCategories: () => import('#controllers/manga/manga_categories_controller'),
+    MangaChapters: () => import('#controllers/manga/manga_chapters_controller'),
+    MangaCharacters: () => import('#controllers/manga/manga_characters_controller'),
+    Manga: () => import('#controllers/manga/manga_controller'),
+    MangaGenres: () => import('#controllers/manga/manga_genres_controller'),
+    MangaStaff: () => import('#controllers/manga/manga_staff_controller'),
+  },
   NewAccount: () => import('#controllers/new_account_controller'),
   Profile: () => import('#controllers/profile_controller'),
 }

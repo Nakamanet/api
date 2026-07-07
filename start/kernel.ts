@@ -46,4 +46,6 @@ router.use([
  */
 export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
+  resolveManga: () => import('#middleware/resolve_manga_middleware'),
+  resolveAnime: () => import('#middleware/resolve_anime_middleware'),
 })
