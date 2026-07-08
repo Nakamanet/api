@@ -18,8 +18,9 @@ const corsConfig = defineConfig({
    * cross-origin browser access is allowed until configured).
    */
   origin: [
-    'http://localhost:3000',  // frontend
-    'http://localhost:8080',  // backend
+    'http://localhost:3000', // frontend
+    'https://nakamanet.fr',
+    'https://dev.nakamanet.fr',
   ],
 
   /**
