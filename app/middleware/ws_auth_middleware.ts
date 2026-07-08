@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import type { Socket } from 'socket.io'
 
 export interface AuthPayload {
-  sub: string        // user id
+  sub: string // user id
   username: string
   avatar_url: string
 }
@@ -22,8 +22,8 @@ export function wsAuth(socket: Socket, next: (err?: Error) => void) {
 
     // attach user info to socket for use in handlers
     socket.data.user = {
-      id:         payload.sub,
-      username:   payload.username,
+      id: payload.sub,
+      username: payload.username,
       avatar_url: payload.avatar_url,
     }
 
