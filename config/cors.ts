@@ -19,9 +19,8 @@ const corsConfig = defineConfig({
    */
   origin: [
     'http://localhost:3000', // frontend
-    'http://localhost:8080', // backend
     'https://nakamanet.fr',
-    'https://api.nakamanet.fr',
+    'https://dev.nakamanet.fr',
   ],
 
   /**

@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   build-and-deploy:
@@ -13,6 +13,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "target=prod" >> $GITHUB_OUTPUT
+          else
+            echo "target=preprod" >> $GITHUB_OUTPUT
+          fi
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -27,7 +36,7 @@ jobs:
           context: .
           target: prod
           push: true
-          tags: ghcr.io/nakamanet/api:prod
+          tags: ghcr.io/nakamanet/api:${{ steps.env.outputs.target }}
 
       - name: Deploy on VPS
         uses: appleboy/ssh-action@v1.0.3
@@ -35,4 +44,4 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_DEPLOY_USER }}
           key: ${{ secrets.VPS_DEPLOY_KEY }}
-          script: prod api
+          script: ${{ steps.env.outputs.target }} api
