@@ -29,6 +29,8 @@ services:
         condition: service_healthy
       mongo:
         condition: service_healthy
+      db:
+        condition: service_healthy
     networks:
       - default
       - shared_network
@@ -42,6 +44,26 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - default
+
+  db:
+    image: postgres:16-alpine
+    container_name: api-db-1
+    environment:
+      POSTGRES_DB: catalog
+      POSTGRES_USER: catalog
+      POSTGRES_PASSWORD: catalog
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - ./catalog.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catalog -d catalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - default
 
@@ -62,6 +84,7 @@ services:
 volumes:
   redisdata:
   mongodata:
+  dbdata:
 
 networks:
   shared_network:
