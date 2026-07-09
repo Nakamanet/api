@@ -26,4 +26,5 @@ export const controllers = {
   },
   NewAccount: () => import('#controllers/new_account_controller'),
   Profile: () => import('#controllers/profile_controller'),
+  Channels: () => import(#controllers/channels_controllerer'),
 }
