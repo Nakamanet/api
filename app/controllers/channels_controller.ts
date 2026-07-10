@@ -1,6 +1,7 @@
 // app/controllers/channels_controller.ts
 import type { HttpContext } from '@adonisjs/core/http'
 import { Channel } from '#models/channel'
+import jwt from 'jsonwebtoken'
 
 export default class ChannelsController {
   async index({ response }: HttpContext) {
@@ -8,7 +9,10 @@ export default class ChannelsController {
     return response.ok(channels)
   }
 
-  async store({ request, response, auth }: HttpContext) {
+  async store({ request, response }: HttpContext) {
+    const token = request.header('authorization')?.replace('Bearer ', '')
+    const payload = jwt.verify(token!, process.env.JWT_SECRET!) as { sub: string }
+
     const { room, label, group, icon } = request.only(['room', 'label', 'group', 'icon'])
 
     if (!room || !label || !group) {
@@ -25,7 +29,7 @@ export default class ChannelsController {
       label,
       group,
       icon: icon ?? 'hash',
-      created_by: String(auth.user!.id),
+      created_by: payload.sub,
     })
 
     return response.created(channel)

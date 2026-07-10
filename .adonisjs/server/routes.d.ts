@@ -21,6 +21,10 @@ export type ScannedRoutes = {
     'manga_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'genres.index': { paramsTuple?: []; params?: {} }
     'categories.index': { paramsTuple?: []; params?: {} }
+    'channels.index': { paramsTuple?: []; params?: {} }
+    'channels.store': { paramsTuple?: []; params?: {} }
+    'channels.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'channels.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   GET: {
     'anime.index': { paramsTuple?: []; params?: {} }
@@ -40,6 +44,7 @@ export type ScannedRoutes = {
     'manga_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'genres.index': { paramsTuple?: []; params?: {} }
     'categories.index': { paramsTuple?: []; params?: {} }
+    'channels.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'anime.index': { paramsTuple?: []; params?: {} }
@@ -59,6 +64,16 @@ export type ScannedRoutes = {
     'manga_staff.index': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'genres.index': { paramsTuple?: []; params?: {} }
     'categories.index': { paramsTuple?: []; params?: {} }
+    'channels.index': { paramsTuple?: []; params?: {} }
+  }
+  POST: {
+    'channels.store': { paramsTuple?: []; params?: {} }
+  }
+  PATCH: {
+    'channels.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+  }
+  DELETE: {
+    'channels.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {
