@@ -108,6 +108,30 @@ const routes = {
     tokens: [{"old":"/categories","type":0,"val":"categories","end":""}],
     types: placeholder as Registry['categories.index']['types'],
   },
+  'channels.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/channels',
+    tokens: [{"old":"/channels","type":0,"val":"channels","end":""}],
+    types: placeholder as Registry['channels.index']['types'],
+  },
+  'channels.store': {
+    methods: ["POST"],
+    pattern: '/channels',
+    tokens: [{"old":"/channels","type":0,"val":"channels","end":""}],
+    types: placeholder as Registry['channels.store']['types'],
+  },
+  'channels.update': {
+    methods: ["PATCH"],
+    pattern: '/channels/:id',
+    tokens: [{"old":"/channels/:id","type":0,"val":"channels","end":""},{"old":"/channels/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['channels.update']['types'],
+  },
+  'channels.destroy': {
+    methods: ["DELETE"],
+    pattern: '/channels/:id',
+    tokens: [{"old":"/channels/:id","type":0,"val":"channels","end":""},{"old":"/channels/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['channels.destroy']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }
