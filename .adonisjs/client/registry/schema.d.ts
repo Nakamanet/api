@@ -259,4 +259,16 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/channels_controller').default['destroy']>>>
     }
   }
+  'dms.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/dms'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/dms_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/dms_controller').default['index']>>>
+    }
+  }
 }

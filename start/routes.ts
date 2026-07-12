@@ -7,6 +7,7 @@ import './routes/anime.ts'
 import './routes/manga.ts'
 import './routes/catalog.ts'
 import './routes/channels.ts'
+import './routes/dms.ts'
 
 router.get('/swagger.json', async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger)

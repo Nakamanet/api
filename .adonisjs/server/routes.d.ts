@@ -25,6 +25,7 @@ export type ScannedRoutes = {
     'channels.store': { paramsTuple?: []; params?: {} }
     'channels.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'channels.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'dms.index': { paramsTuple?: []; params?: {} }
   }
   GET: {
     'anime.index': { paramsTuple?: []; params?: {} }
@@ -45,6 +46,7 @@ export type ScannedRoutes = {
     'genres.index': { paramsTuple?: []; params?: {} }
     'categories.index': { paramsTuple?: []; params?: {} }
     'channels.index': { paramsTuple?: []; params?: {} }
+    'dms.index': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'anime.index': { paramsTuple?: []; params?: {} }
@@ -65,6 +67,7 @@ export type ScannedRoutes = {
     'genres.index': { paramsTuple?: []; params?: {} }
     'categories.index': { paramsTuple?: []; params?: {} }
     'channels.index': { paramsTuple?: []; params?: {} }
+    'dms.index': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'channels.store': { paramsTuple?: []; params?: {} }
