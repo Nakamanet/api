@@ -8,9 +8,10 @@ export default class AnimeController {
     const page = request.input('page', 1)
     const limit = request.input('limit', 20)
     const genreSlug = request.input('genre')
+    const search = request.input('search')
 
     const anime = await cache.getOrSet({
-      key: `anime:list:p${page}:l${limit}:g${genreSlug ?? 'all'}`,
+      key: `anime:list:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
       ttl: '5m',
       factory: async () => {
         const query = Anime.query()
@@ -22,13 +23,20 @@ export default class AnimeController {
           })
         }
 
+        if (search) {
+          query.where((builder) => {
+            builder
+              .whereILike('title_en', `%${search}%`)
+              .orWhereILike('title_jp', `%${search}%`)
+          })
+        }
+
         return await query.orderBy('id', 'asc').paginate(page, limit)
       },
     })
 
     return response.ok(anime)
   }
-
 
   async show({ params, response }: HttpContext) {
     const identifier = params.id
