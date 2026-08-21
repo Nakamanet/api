@@ -8,9 +8,10 @@ export default class MangaController {
     const page = request.input('page', 1)
     const limit = request.input('limit', 20)
     const genreSlug = request.input('genre')
+    const search = request.input('search')
 
     const manga = await cache.getOrSet({
-      key: `manga:list:p${page}:l${limit}:g${genreSlug ?? 'all'}`,
+      key: `manga:list:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
       ttl: '5m',
       factory: async () => {
         const query = Manga.query()
@@ -19,6 +20,14 @@ export default class MangaController {
           const genre = await Genre.findByOrFail('slug', genreSlug)
           query.whereHas('genres', (genresQuery) => {
             genresQuery.where('id', genre.id)
+          })
+        }
+
+        if (search) {
+          query.where((builder) => {
+            builder
+              .whereILike('title_en', `%${search}%`)
+              .orWhereILike('title_jp', `%${search}%`)
           })
         }
 

@@ -49,4 +49,13 @@ export interface ApiDefinition {
   categories: {
     index: typeof routes['categories.index']
   }
+  channels: {
+    index: typeof routes['channels.index']
+    store: typeof routes['channels.store']
+    update: typeof routes['channels.update']
+    destroy: typeof routes['channels.destroy']
+  }
+  dms: {
+    index: typeof routes['dms.index']
+  }
 }
