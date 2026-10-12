@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import cache from '@adonisjs/cache/services/main'
+import { getPopularity, orderByPopularity, popularityCacheKey } from '#services/popularity_service'
 import Manga from '#models/manga/manga'
 import Genre from '#models/genre'
 
@@ -10,8 +11,10 @@ export default class MangaController {
     const genreSlug = request.input('genre')
     const search = request.input('search')
 
+    const popularity = await getPopularity('manga')
+
     const manga = await cache.getOrSet({
-      key: `manga:list:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
+      key: `manga:list:pop${popularityCacheKey(popularity)}:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
       ttl: '5m',
       factory: async () => {
         const query = Manga.query()
@@ -31,7 +34,7 @@ export default class MangaController {
           })
         }
 
-        return query.orderBy('id', 'asc').paginate(page, limit)
+        return orderByPopularity(query, popularity).paginate(page, limit)
       },
     })
 

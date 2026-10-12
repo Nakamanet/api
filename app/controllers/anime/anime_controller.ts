@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Anime from '#models/anime/anime'
 import Genre from '#models/genre'
 import cache from '@adonisjs/cache/services/main'
+import { getPopularity, orderByPopularity, popularityCacheKey } from '#services/popularity_service'
 
 export default class AnimeController {
   async index({ request, response }: HttpContext) {
@@ -10,8 +11,10 @@ export default class AnimeController {
     const genreSlug = request.input('genre')
     const search = request.input('search')
 
+    const popularity = await getPopularity('anime')
+
     const anime = await cache.getOrSet({
-      key: `anime:list:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
+      key: `anime:list:pop${popularityCacheKey(popularity)}:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
       ttl: '5m',
       factory: async () => {
         const query = Anime.query()
@@ -31,7 +34,7 @@ export default class AnimeController {
           })
         }
 
-        return await query.orderBy('id', 'asc').paginate(page, limit)
+        return orderByPopularity(query, popularity).paginate(page, limit)
       },
     })
 

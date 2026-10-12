@@ -16,6 +16,7 @@ export const controllers = {
   },
   Categories: () => import('#controllers/categories_controller'),
   Channels: () => import('#controllers/channels_controller'),
+  Dms: () => import('#controllers/dms_controller'),
   Genres: () => import('#controllers/genres_controller'),
   manga: {
     MangaCategories: () => import('#controllers/manga/manga_categories_controller'),
@@ -27,5 +28,4 @@ export const controllers = {
   },
   NewAccount: () => import('#controllers/new_account_controller'),
   Profile: () => import('#controllers/profile_controller'),
-  Dms: () => import('#controllers/dms_controller'),
 }
