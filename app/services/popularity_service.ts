@@ -12,26 +12,28 @@ export async function getPopularity(type: CatalogType): Promise<Popularity> {
   const baseUrl = env.get('LARAVEL_API_URL')
   if (!baseUrl) return []
 
-  return cache.getOrSet({
-    key: `popularity:counts:${type}`,
-    ttl: '5m',
-    factory: async () => {
-      try {
+  try {
+    return await cache.getOrSet({
+      key: `popularity:v2:${type}`,
+      ttl: '5m',
+      grace: '24h',
+      graceBackoff: '30s',
+      factory: async () => {
         const response = await fetch(`${baseUrl}/library/popularity/${type}`, {
-          signal: AbortSignal.timeout(3000),
+          signal: AbortSignal.timeout(5000),
         })
-        if (!response.ok) return []
+        if (!response.ok) throw new Error(`Popularity request failed with ${response.status}`)
 
         const rows = (await response.json()) as { id: number; count: number }[]
         return rows
           .map((row) => ({ id: Number(row.id), count: Number(row.count) }))
           .filter((row) => Number.isInteger(row.id) && Number.isInteger(row.count))
-      } catch (error) {
-        logger.warn({ err: error }, `Popularity fetch failed for ${type}`)
-        return []
-      }
-    },
-  })
+      },
+    })
+  } catch (error) {
+    logger.warn({ err: error }, `Popularity unavailable for ${type}`)
+    return []
+  }
 }
 
 export function popularityCacheKey(popularity: Popularity): string {
