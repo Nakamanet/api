@@ -14,7 +14,7 @@ export default class MangaController {
     const popularity = await getPopularity('manga')
 
     const manga = await cache.getOrSet({
-      key: `manga:list:pop${popularityCacheKey(popularity)}:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
+      key: `manga:list:v2:pop${popularityCacheKey(popularity)}:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
       ttl: '5m',
       factory: async () => {
         const query = Manga.query()
@@ -34,7 +34,7 @@ export default class MangaController {
           })
         }
 
-        return orderByPopularity(query, popularity).paginate(page, limit)
+        return orderByPopularity(query.preload('genres'), popularity).paginate(page, limit)
       },
     })
 

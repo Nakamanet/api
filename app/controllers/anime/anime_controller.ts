@@ -14,7 +14,7 @@ export default class AnimeController {
     const popularity = await getPopularity('anime')
 
     const anime = await cache.getOrSet({
-      key: `anime:list:pop${popularityCacheKey(popularity)}:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
+      key: `anime:list:v2:pop${popularityCacheKey(popularity)}:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
       ttl: '5m',
       factory: async () => {
         const query = Anime.query()
@@ -34,7 +34,7 @@ export default class AnimeController {
           })
         }
 
-        return orderByPopularity(query, popularity).paginate(page, limit)
+        return orderByPopularity(query.preload('genres'), popularity).paginate(page, limit)
       },
     })
 
