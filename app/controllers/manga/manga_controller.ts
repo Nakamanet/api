@@ -45,12 +45,12 @@ export default class MangaController {
     const identifier = params.id
 
     const manga = await cache.getOrSet({
-      key: `manga:show:${identifier}`,
+      key: `manga:show:v2:${identifier}`,
       ttl: '10m',
       factory: async () => {
         return isNaN(Number(identifier))
-          ? await Manga.query().where('slug', identifier).firstOrFail()
-          : await Manga.findOrFail(identifier)
+          ? await Manga.query().where('slug', identifier).preload('genres').firstOrFail()
+          : await Manga.query().where('id', identifier).preload('genres').firstOrFail()
       },
     })
 

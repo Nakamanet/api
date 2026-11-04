@@ -44,8 +44,8 @@ export default class AnimeController {
   async show({ params, response }: HttpContext) {
     const identifier = params.id
     const anime = isNaN(Number(identifier))
-      ? await Anime.query().where('slug', identifier).firstOrFail()
-      : await Anime.findOrFail(identifier)
+      ? await Anime.query().where('slug', identifier).preload('genres').firstOrFail()
+      : await Anime.query().where('id', identifier).preload('genres').firstOrFail()
     return response.ok(anime)
   }
 }
