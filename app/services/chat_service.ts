@@ -10,28 +10,87 @@ const DEFAULT_ROOM = 'general'
 const MEMBER_HISTORY_LIMIT = 50
 const GUEST_HISTORY_LIMIT = 20
 
+const TOXIC_PATTERNS = [
+  /suicide/i,
+  /\bkill\b/i,
+  /\btuer\b/i,
+  /\bcr[eèé]ve\b/i,
+  /\bmort\b/i,
+  /\bnique\b/i,
+  /\bbaise\b/i,
+  /\bpute\b/i,
+  /\bfdp\b/i,
+  /\bsalope\b/i,
+  /\bconnard\b/i,
+  /\bconnasse\b/i,
+  /\bb[aâ]tard\b/i,
+  /\bencul[eé]\b/i,
+  /\bchienne\b/i,
+  /\bcochon\b/i,
+  /\bmerde\b/i,
+  /\bfuck\b/i,
+  /\bbitch/i,
+  /\basshole\b/i,
+  /\bcunt\b/i,
+  /\bdick\b/i,
+  /\bpussy\b/i,
+  /\bwhore\b/i,
+  /\bslut\b/i,
+  /\bnigger\b/i,
+  /\bfaggot\b/i,
+]
+
+export function isToxicText(text?: string | null): boolean {
+  if (!text) return false
+  const lower = text.toLowerCase()
+  return TOXIC_PATTERNS.some((pattern) => pattern.test(lower))
+}
+
 async function isContentFlagged(text: string): Promise<boolean> {
+  if (isToxicText(text)) {
+    return true
+  }
+
+  // 1. If OpenAI API key is set in environment, call OpenAI directly
   const apiKey = process.env.OPENAI_API_KEY
-  if (!apiKey) return false
+  if (apiKey) {
+    try {
+      const res = await fetch('https://api.openai.com/v1/moderations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input: text }),
+      })
 
+      if (res.ok) {
+        const data: any = await res.json()
+        if (data?.results?.[0]?.flagged) {
+          return true
+        }
+      }
+    } catch (err) {
+      console.error('Chat moderation API error:', err)
+    }
+  }
+
+  // 2. Fallback to Laravel backend moderation endpoint
   try {
-    const res = await fetch('https://api.openai.com/v1/moderations', {
+    const backendUrl = process.env.BACKEND_INTERNAL_URL || process.env.BACKEND_URL || 'http://localhost:8000'
+    const res = await fetch(`${backendUrl}/api/moderate`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ input: text }),
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ content: text }),
     })
-
     if (res.ok) {
       const data: any = await res.json()
-      if (data?.results?.[0]?.flagged) {
+      if (data?.flagged) {
         return true
       }
     }
-  } catch (err) {
-    console.error('Chat moderation API error:', err)
+  } catch {
+    // Ignore internal fallback network error
   }
 
   return false
@@ -96,7 +155,12 @@ export class ChatService {
           .limit(user ? MEMBER_HISTORY_LIMIT : GUEST_HISTORY_LIMIT)
           .lean()
 
-        socket.emit('history', history.reverse())
+        const sanitizedHistory = history.map((msg: any) => ({
+          ...msg,
+          is_hidden: Boolean(msg.is_hidden || isToxicText(msg.content)),
+        }))
+
+        socket.emit('history', sanitizedHistory.reverse())
       })
 
       socket.on(
@@ -116,7 +180,12 @@ export class ChatService {
             is_hidden: isHidden,
           })
 
-          this.io.to(data.room).emit('chat:message', message)
+          const payload = {
+            ...(message.toObject ? message.toObject() : message.toJSON ? message.toJSON() : message),
+            is_hidden: isHidden,
+          }
+
+          this.io.to(data.room).emit('chat:message', payload)
         }
       )
 
