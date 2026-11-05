@@ -7,6 +7,7 @@ const messageSchema = new mongoose.Schema({
   username:   { type: String, required: true },
   avatar_url: { type: String, default: null },
   content:    { type: String, required: true },
+  is_hidden:  { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
 })
 

@@ -10,6 +10,33 @@ const DEFAULT_ROOM = 'general'
 const MEMBER_HISTORY_LIMIT = 50
 const GUEST_HISTORY_LIMIT = 20
 
+async function isContentFlagged(text: string): Promise<boolean> {
+  const apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) return false
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/moderations', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ input: text }),
+    })
+
+    if (res.ok) {
+      const data: any = await res.json()
+      if (data?.results?.[0]?.flagged) {
+        return true
+      }
+    }
+  } catch (err) {
+    console.error('Chat moderation API error:', err)
+  }
+
+  return false
+}
+
 export class ChatService {
   private io!: Server
 
@@ -78,12 +105,15 @@ export class ChatService {
           console.log('message received:', data)
           if (!user || !data.content?.trim() || !data.room) return
 
+          const isHidden = await isContentFlagged(data.content.trim())
+
           const message = await Message.create({
             room: data.room,
             user_id: user.id,
             username: data.username,
             avatar_url: data.avatar_url ?? null,
             content: data.content.trim(),
+            is_hidden: isHidden,
           })
 
           this.io.to(data.room).emit('chat:message', message)
