@@ -3,9 +3,12 @@ import { Server, Socket } from 'socket.io'
 import { createServer } from 'node:http'
 import jwt from 'jsonwebtoken'
 import { Message } from '#models/message'
+import { Channel } from '#models/channel'
 import mongoose from 'mongoose'
 
-const GUEST_ROOM = 'general'
+const DEFAULT_ROOM = 'general'
+const MEMBER_HISTORY_LIMIT = 50
+const GUEST_HISTORY_LIMIT = 20
 
 export class ChatService {
   private io!: Server
@@ -52,7 +55,7 @@ export class ChatService {
 
       socket.on('chat:join', async (room: string) => {
         if (!room || typeof room !== 'string') return
-        if (!user && room !== GUEST_ROOM) return
+        if (!user && room !== DEFAULT_ROOM && !(await Channel.exists({ room }))) return
 
         if (currentRoom) {
           socket.leave(currentRoom)
@@ -63,7 +66,7 @@ export class ChatService {
 
         const history = await Message.find({ room })
           .sort({ created_at: -1 })
-          .limit(50)
+          .limit(user ? MEMBER_HISTORY_LIMIT : GUEST_HISTORY_LIMIT)
           .lean()
 
         socket.emit('history', history.reverse())
