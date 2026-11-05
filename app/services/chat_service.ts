@@ -5,6 +5,8 @@ import jwt from 'jsonwebtoken'
 import { Message } from '#models/message'
 import mongoose from 'mongoose'
 
+const GUEST_ROOM = 'general'
+
 export class ChatService {
   private io!: Server
 
@@ -25,7 +27,10 @@ export class ChatService {
           socket.handshake.auth?.token ||
           socket.handshake.headers.authorization?.replace('Bearer ', '')
 
-        if (!token) return next(new Error('No token'))
+        if (!token) {
+          socket.data.user = null
+          return next()
+        }
 
         const payload = jwt.verify(token, process.env.JWT_SECRET!, {
           algorithms: ['HS256'],
@@ -41,12 +46,13 @@ export class ChatService {
 
     this.io.on('connection', (socket: Socket) => {
       const user = socket.data.user
-      console.log(`${user.id} connected`)
+      console.log(`${user?.id ?? 'guest'} connected`)
 
       let currentRoom: string | null = null
 
       socket.on('chat:join', async (room: string) => {
         if (!room || typeof room !== 'string') return
+        if (!user && room !== GUEST_ROOM) return
 
         if (currentRoom) {
           socket.leave(currentRoom)
@@ -67,7 +73,7 @@ export class ChatService {
         'chat:message',
         async (data: { room: string; content: string; username: string; avatar_url: string | null }) => {
           console.log('message received:', data)
-          if (!data.content?.trim() || !data.room) return
+          if (!user || !data.content?.trim() || !data.room) return
 
           const message = await Message.create({
             room: data.room,
@@ -82,7 +88,7 @@ export class ChatService {
       )
 
       socket.on('disconnect', () => {
-        console.log(`${user.id} disconnected`)
+        console.log(`${user?.id ?? 'guest'} disconnected`)
       })
     })
   }

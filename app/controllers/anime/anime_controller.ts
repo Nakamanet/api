@@ -1,25 +1,38 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Anime from '#models/anime/anime'
-import Genre from '#models/genre'
 import cache from '@adonisjs/cache/services/main'
+import { getPopularity, orderByPopularity, popularityCacheKey } from '#services/popularity_service'
+
+function parseSlugs(value: unknown): string[] {
+  if (!value) return []
+  return [...new Set(String(value).split(',').map((slug) => slug.trim()).filter(Boolean))].sort()
+}
 
 export default class AnimeController {
   async index({ request, response }: HttpContext) {
     const page = request.input('page', 1)
     const limit = request.input('limit', 20)
-    const genreSlug = request.input('genre')
+    const includeGenres = parseSlugs(request.input('genre'))
+    const excludeGenres = parseSlugs(request.input('excludeGenres'))
     const search = request.input('search')
 
+    const popularity = await getPopularity('anime')
+
     const anime = await cache.getOrSet({
-      key: `anime:list:p${page}:l${limit}:g${genreSlug ?? 'all'}:s${search ?? 'none'}`,
+      key: `anime:list:v2:pop${popularityCacheKey(popularity)}:p${page}:l${limit}:g${includeGenres.join('-') || 'all'}:xg${excludeGenres.join('-') || 'none'}:s${search ?? 'none'}`,
       ttl: '5m',
       factory: async () => {
         const query = Anime.query()
 
-        if (genreSlug) {
-          const genre = await Genre.findByOrFail('slug', genreSlug)
+        for (const slug of includeGenres) {
           query.whereHas('genres', (genresQuery) => {
-            genresQuery.where('id', genre.id)
+            genresQuery.where('slug', slug)
+          })
+        }
+
+        if (excludeGenres.length > 0) {
+          query.whereDoesntHave('genres', (genresQuery) => {
+            genresQuery.whereIn('slug', excludeGenres)
           })
         }
 
@@ -31,7 +44,7 @@ export default class AnimeController {
           })
         }
 
-        return await query.orderBy('id', 'asc').paginate(page, limit)
+        return orderByPopularity(query.preload('genres'), popularity).paginate(page, limit)
       },
     })
 
@@ -41,8 +54,8 @@ export default class AnimeController {
   async show({ params, response }: HttpContext) {
     const identifier = params.id
     const anime = isNaN(Number(identifier))
-      ? await Anime.query().where('slug', identifier).firstOrFail()
-      : await Anime.findOrFail(identifier)
+      ? await Anime.query().where('slug', identifier).preload('genres').firstOrFail()
+      : await Anime.query().where('id', identifier).preload('genres').firstOrFail()
     return response.ok(anime)
   }
 }
