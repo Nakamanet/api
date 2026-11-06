@@ -20,6 +20,9 @@ export default class AnimeCasting extends BaseModel {
   @column()
   declare role: string
 
+  @column()
+  declare language: string | null
+
   @belongsTo(() => Character, { foreignKey: 'character_id' })
   declare character: BelongsTo<typeof Character>
 

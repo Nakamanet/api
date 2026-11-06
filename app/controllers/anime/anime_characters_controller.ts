@@ -5,7 +5,7 @@ import db from '@adonisjs/lucid/services/db'
 export default class AnimeCharactersController {
   async index({ params, response }: HttpContext) {
     const castings = await cache.getOrSet({
-      key: `anime:${params.id}:characters`,
+      key: `anime:${params.id}:characters:v2`,
       ttl: '30m',
       factory: async () => {
         const rows = await db
@@ -28,6 +28,7 @@ export default class AnimeCharactersController {
             'ac.character_id',
             'ac.person_id',
             'ac.role',
+            'ac.language',
             'ac.character_role',
             'c.name as c_name',
             'c.description as c_description',
@@ -44,6 +45,7 @@ export default class AnimeCharactersController {
           characterId: row.character_id,
           personId: row.person_id,
           role: row.character_role ?? row.role,
+          language: row.language ?? null,
           character: {
             id: row.character_id,
             name: row.c_name,
